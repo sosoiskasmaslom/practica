@@ -63,6 +63,6 @@ else:
 
     received_code = open('received.txt', 'r').read().strip()
     decoded_bits = decode_hamming(received_code)
-    open('decoded_output.txt', 'w').write(decoded_bits)
+    open('received.txt', 'w').write(decoded_bits)
         
 print("Программа завершена.")
