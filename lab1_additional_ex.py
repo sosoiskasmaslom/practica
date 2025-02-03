@@ -5,7 +5,15 @@ def check(func, quan):
 
     quantities = sp.symbols(quan)
     f = eval(func)
-    print(sp.diff(f, quantities[0], quantities[1]).simplify())
+    print(
+        sp.diff(
+            f, 
+            eval(", ".join(
+                [f"quantities[{i}]" for i in range(len(quantities))]
+                )
+            )
+        ).simplify()
+    )
 
 def parse(file):
 
@@ -35,7 +43,8 @@ def parse(file):
     
     print(quan)
 
-    check(func, quan)
+    if "," in quan: check(func, quan)
+    else: print("hello")
 
 if __name__ == '__main__':
 
