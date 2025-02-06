@@ -1,0 +1,23 @@
+#!/bin/bash
+
+var="dkjsbfl"
+
+if [ $# -lt 1 ]; then
+    echo "Использование: $0 <имя_файла.cpp> [аргументы...]"
+    exit 1
+fi
+
+g++ $1 -o $var
+if [ $? -ne 0 ]; then
+    echo "Ошибка компиляции $SOURCE_FILE"
+    exit 1
+fi
+
+if [ $# -lt 2 ]; 
+    then 
+    ./$var
+    else 
+    ./$var "$@"
+fi
+
+rm $var
