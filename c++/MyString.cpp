@@ -17,7 +17,11 @@ class MyString
     int size();
 
     MyString& operator=(MyString);
+
     MyString operator+(const MyString&);
+    MyString& operator+=(const MyString&);
+    MyString operator+(const char*);
+    MyString& operator+=(const char*);
 
     protected:
         int size_;
@@ -56,15 +60,42 @@ MyString MyString::operator+(const MyString& other)
     return MyString(tmp);
 }
 
+MyString& MyString::operator+=(const MyString& other)
+{
+    strcat(str_, other.str_);
+    size_ = strlen(str_);
+
+    return *this;
+}
+
+MyString MyString::operator+(const char* str)
+{
+    char* tmp = str_;
+    strcat(tmp, str);
+
+    return MyString(tmp);
+}
+
+MyString& MyString::operator+=(const char* str)
+{
+    strcat(str_, str);
+    size_ = strlen(str_);
+
+    return *this;
+}
+
+
 ostream& operator<<(ostream& out, const MyString& str)
 { return out << str.str_; }
 
-int main()
-{
-    MyString s = "I love ";
-    MyString t = "big black";
-    cout << s << t << endl;
-    cout << s+t << endl;
 
-    return 0;
-}
+// int main()
+// {
+//     MyString s = "I love ";
+//     MyString t = "big black";
+
+//     cout << s << endl;
+//     // cout << s+t << endl;
+
+//     return 0;
+// }
