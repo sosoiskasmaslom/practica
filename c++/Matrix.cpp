@@ -6,33 +6,50 @@ using namespace std;
 
 class Matrix
 {
-    friend ostream& operator<< (ostream&, Matrix&);
+    friend ostream& operator<< (ostream&, Matrix);
+    friend Matrix& operator++(Matrix&);
+    friend Matrix& operator--(Matrix&);
 
     public:
 
-    Matrix(int m, int n, int c);
-    Matrix(vector<vector<int>>& key);
+    Matrix();
+    Matrix(int, int, int);
+    Matrix(vector<vector<int>>&);
+    Matrix(Matrix&);
     ~Matrix();
 
     int det();
-    Matrix minor(int i, int j);
+    Matrix minor(int, int);
     Matrix trans();
     Matrix adj();
-    Matrix invert(int size, int rd);
+    Matrix invert(int, int);
     int get_n();
 
-    Matrix operator+ (Matrix& second);
-    Matrix operator* (Matrix& second);
-    Matrix operator* (int number);
-    Matrix operator% (int number);
+    Matrix operator+ (Matrix&);
+    Matrix operator- (Matrix&);
+    Matrix operator+ (int);
+    Matrix operator- (int);
 
-    vector<int>& operator[] (int c);
+    Matrix& operator+= (Matrix&);
+    Matrix& operator-= (Matrix&);
+    Matrix& operator+= (int);
+    Matrix& operator-= (int);
+
+    Matrix operator* (Matrix&);
+    Matrix operator* (int);
+    Matrix operator% (int);
+
+    vector<int>& operator[] (int);
 
     protected:
 
     int m, n;
     vector<vector<int>> matr;
 };
+
+Matrix::Matrix():
+m(0), n(0)
+{}
 
 Matrix::Matrix(int m, int n, int c = 0):
 m(m), n(n)
@@ -42,7 +59,8 @@ m(m), n(n)
         matr.push_back(vector<int>());
         for (int j = 0; j<n; j++)
         {
-            matr[matr.size()-1].push_back(c);
+            if (i == j) matr[matr.size()-1].push_back(c);
+            else matr[matr.size()-1].push_back(0);
         }
     } 
 }
@@ -54,10 +72,16 @@ matr(key)
     n = matr[0].size();
 }
 
+Matrix::Matrix(Matrix& second):
+m(second.m), 
+n(second.n),
+matr(second.matr)
+{}
+
 Matrix::~Matrix()
 {
     while (!matr.empty())
-    {matr.pop_back();}
+    { matr.pop_back(); }
 
     m = 0;
     n = 0;
@@ -170,9 +194,7 @@ Matrix Matrix::invert(int size, int rd)
 }
 
 int Matrix::get_n()
-{
-    return n;
-}
+{ return n; }
 
 Matrix Matrix::operator+(Matrix& second)
 {
@@ -193,6 +215,45 @@ Matrix Matrix::operator+(Matrix& second)
     }
 
     return result; 
+}
+
+Matrix Matrix::operator-(Matrix& second)
+{
+    Matrix new_one {second*-1};
+    return *this + new_one;
+}
+
+Matrix Matrix::operator+(int c)
+{
+    Matrix second {m, n, c};
+    return *this + second;
+}
+
+Matrix Matrix::operator-(int c)
+{ return *this + (-c); }
+
+Matrix& Matrix::operator+=(Matrix& second)
+{
+    matr = (*this + second).matr;
+    return *this;
+}
+
+Matrix& Matrix::operator-=(Matrix& second)
+{
+    matr = (*this - second).matr;
+    return *this;
+}
+
+Matrix& Matrix::operator+=(int c)
+{
+    matr = (*this + c).matr;
+    return *this;
+}
+
+Matrix& Matrix::operator-=(int c)
+{
+    matr = (*this - c).matr;
+    return *this;
 }
 
 Matrix Matrix::operator*(Matrix& second)
@@ -256,17 +317,39 @@ Matrix Matrix::operator%(int c)
 }
 
 vector<int>& Matrix::operator[](int c)
-{return matr[c];}
+{ return matr[c]; }
 
-ostream& operator<< (ostream& out, Matrix& pups)
+
+ostream& operator<< (ostream& out, Matrix pups)
 {
     vector<vector<int>> key = pups.matr;
     for(int i = 0; i<key.size(); i++)
     {
         for (int j = 0; j<key[i].size(); j++)
         {
-            cout << key[i][j] << ' ';
+            out << key[i][j] << ' ';
         }
-        cout << endl;
+        out << endl;
     }
+
+    return out;
 }
+
+Matrix& operator++(Matrix& second)
+{ return second += 1; }
+
+Matrix& operator--(Matrix& second)
+{ return second -= 1; }
+
+
+// int main()
+// {
+//     Matrix boobs {3, 3, 9};
+//     int deter = boobs.det();
+//     Matrix new_one {(boobs.adj())};
+
+//     cout << boobs.det() << endl;
+//     cout << new_one;
+
+//     return 0;
+// }
