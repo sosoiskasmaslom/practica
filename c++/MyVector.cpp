@@ -5,11 +5,12 @@ using namespace std;
 
 class MyVector
 {
-    friend ostream& operator<< (ostream&, MyVector&);
+    friend ostream& operator<< (ostream&, MyVector);
 
     public:
 
     MyVector();
+    template<size_t N> MyVector(int(&array)[N]);
     MyVector(MyVector&);
     ~MyVector();
 
@@ -28,6 +29,7 @@ class MyVector
 
     int& operator[] (int);
     MyVector& operator= (MyVector&);
+    MyVector operator+ (MyVector&);
 
     protected:
 
@@ -40,15 +42,26 @@ MyVector::MyVector():
 data(nullptr), size_(0), capacity_(0)
 {}
 
+template<size_t N>
+MyVector::MyVector(int(&array)[N]):
+data(new int[N]), size_(N), capacity_(N)
+{
+    for (int i = 0; i<N; i++)
+    data[i] = array[i];
+}
+
 MyVector::MyVector(MyVector& another):
-data(another.data), size_(another.size_), 
-capacity_(another.capacity_) 
-{}
+data(new int[another.size_]),
+size_(another.size_),
+capacity_(another.size_)
+{
+    for (int i = 0; i<size_; i++)
+    data[i] = another[i];
+}
 
 MyVector::~MyVector()
 {
-    delete[] data;
-    data = nullptr;
+    if (data != nullptr) delete[] data;
     size_ = 0;
     capacity_ = 0;
 }
@@ -75,24 +88,22 @@ void MyVector::reserve(int s)
 }
 
 void MyVector::shrink_to_fit()
-{
-    reserve(size_);
-}
+{ reserve(size_); }
 
 int& MyVector::front()
-{return data[0];}
+{ return data[0]; }
 
 int& MyVector::back()
-{return data[size_-1];}
+{ return data[size_-1]; } 
 
 int MyVector::size()
-{return size_;}
+{ return size_; }
 
 bool MyVector::empty()
-{return (size_<=0);}
+{ return (size_<=0); }
 
 int MyVector::capacity()
-{return capacity_;}
+{ return capacity_; }
 
 void MyVector::push_back(int value)
 {
@@ -131,7 +142,7 @@ void MyVector::erase(int left, int right)
 }
 
 int& MyVector::operator[] (int i)
-{return data[i];}
+{ return data[i]; }
 
 MyVector& MyVector::operator= (MyVector& another)
 {
@@ -142,7 +153,17 @@ MyVector& MyVector::operator= (MyVector& another)
     return *this;
 }
 
-ostream& operator<< (ostream& out, MyVector& pups)
+MyVector MyVector::operator+ (MyVector& another)
+{
+    MyVector tmp {*this};
+    for (int i = 0; i<another.size_; i++)
+    tmp.push_back(another[i]);
+
+    return tmp;
+}
+
+
+ostream& operator<< (ostream& out, MyVector pups)
 {
     out << '[';
     for (int i = 0; i<pups.size_; i++)
@@ -153,18 +174,15 @@ ostream& operator<< (ostream& out, MyVector& pups)
     return out << "]";
 }
 
-int main()
-{
-    MyVector blya;
-    blya.push_back(12);
-    blya.push_back(45);
-    blya.push_back(14);
-    blya.push_back(62);
-    blya.push_back(49);
-    // blya.resize(3);
-    // blya.insert(36, 0);
+// int main()
+// {
+//     int one[] {1, 2, 3, 4, 5};
+//     int two[] {7, 8, 9};
 
-    cout << blya << endl;
+//     MyVector first = one;
+//     MyVector second = two;
 
-    return 0;
-}
+//     cout << first+second << endl;
+
+//     return 0;
+// }
