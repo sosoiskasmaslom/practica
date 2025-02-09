@@ -1,57 +1,60 @@
 
 #include <iostream>
-#include <stdarg.h>
 using namespace std;
 
+template<class Type>
 class MyVector
 {
-    friend ostream& operator<< (ostream&, MyVector);
+    template<class Fuck> friend ostream& operator<< (ostream&, MyVector<Fuck>);
 
     public:
 
     MyVector();
-    template<size_t N> MyVector(int(&array)[N]);
+    template<size_t N> MyVector(Type(&array)[N]);
     MyVector(MyVector&);
     ~MyVector();
 
     void resize(int);
     void reserve(int);
     void shrink_to_fit();
-    int& front();
-    int& back();
+    Type& front();
+    Type& back();
     int size();
     bool empty();
     int capacity();
-    void push_back(int);
-    void insert(int, int);
+    void push_back(Type);
+    void insert(Type, int);
     void erase(int);
     void erase(int, int);
 
-    int& operator[] (int);
+    Type& operator[] (int);
     MyVector& operator= (MyVector&);
     MyVector operator+ (MyVector&);
 
     protected:
 
-    int* data;
+    Type* data;
     size_t size_;
     size_t capacity_;
 };
 
-MyVector::MyVector():
+template<class Type>
+MyVector<Type>::MyVector():
 data(nullptr), size_(0), capacity_(0)
 {}
 
+template<class Type>
 template<size_t N>
-MyVector::MyVector(int(&array)[N]):
-data(new int[N]), size_(N), capacity_(N)
+MyVector<Type>::MyVector(Type(&array)[N]):
+data(new Type[N]), size_(N), capacity_(N)
 {
     for (int i = 0; i<N; i++)
     data[i] = array[i];
 }
 
-MyVector::MyVector(MyVector& another):
-data(new int[another.size_]),
+template<class Type>
+MyVector<Type>::MyVector(MyVector& another):
+data(new Type[another.size_]),
 size_(another.size_),
 capacity_(another.size_)
 {
@@ -59,24 +62,27 @@ capacity_(another.size_)
     data[i] = another[i];
 }
 
-MyVector::~MyVector()
+template<class Type>
+MyVector<Type>::~MyVector()
 {
     if (data != nullptr) delete[] data;
     size_ = 0;
     capacity_ = 0;
 }
 
-void MyVector::resize(int s)
+template<class Type>
+void MyVector<Type>::resize(int s)
 {
     size_ = s;
     reserve(s);
 }
 
-void MyVector::reserve(int s)
+template<class Type>
+void MyVector<Type>::reserve(int s)
 {
     size_t new_capacity = (capacity_ == 0) ? 1 : 2 * capacity_;
     if (s != -1) new_capacity = s;
-    int* new_data = new int[new_capacity]; 
+    Type* new_data = new Type[new_capacity]; 
         
     for (size_t i = 0; i < size_; ++i) {
         new_data[i] = (data[i]) ? data[i] : 0;
@@ -87,32 +93,40 @@ void MyVector::reserve(int s)
     capacity_ = new_capacity;
 }
 
-void MyVector::shrink_to_fit()
+template<class Type>
+void MyVector<Type>::shrink_to_fit()
 { reserve(size_); }
 
-int& MyVector::front()
+template<class Type>
+Type& MyVector<Type>::front()
 { return data[0]; }
 
-int& MyVector::back()
+template<class Type>
+Type& MyVector<Type>::back()
 { return data[size_-1]; } 
 
-int MyVector::size()
+template<class Type>
+int MyVector<Type>::size()
 { return size_; }
 
-bool MyVector::empty()
+template<class Type>
+bool MyVector<Type>::empty()
 { return (size_<=0); }
 
-int MyVector::capacity()
+template<class Type>
+int MyVector<Type>::capacity()
 { return capacity_; }
 
-void MyVector::push_back(int value)
+template<class Type>
+void MyVector<Type>::push_back(Type value)
 {
     if (size_ == capacity_) reserve(-1);
     data[size_] = value;
     size_++;
 }
 
-void MyVector::insert(int value, int ind)
+template<class Type>
+void MyVector<Type>::insert(Type value, int ind)
 {
     push_back(back());
     for (int i = size_-1; i>ind-1; i--)
@@ -122,7 +136,8 @@ void MyVector::insert(int value, int ind)
     data[ind] = value;
 }
 
-void MyVector::erase(int ind)
+template<class Type>
+void MyVector<Type>::erase(int ind)
 {
     for (int i = ind; i<size_-1; i++)
     {
@@ -131,7 +146,8 @@ void MyVector::erase(int ind)
     resize(size_-1);
 }
 
-void MyVector::erase(int left, int right)
+template<class Type>
+void MyVector<Type>::erase(int left, int right)
 {
     int diff = right-left+1;
     for (int i = right+1; i<size_; i++)
@@ -141,10 +157,12 @@ void MyVector::erase(int left, int right)
     resize(size_-diff);
 }
 
-int& MyVector::operator[] (int i)
+template<class Type>
+Type& MyVector<Type>::operator[] (int i)
 { return data[i]; }
 
-MyVector& MyVector::operator= (MyVector& another)
+template<class Type>
+MyVector<Type>& MyVector<Type>::operator= (MyVector& another)
 {
     data = another.data;
     size_ = another.size_;
@@ -153,7 +171,8 @@ MyVector& MyVector::operator= (MyVector& another)
     return *this;
 }
 
-MyVector MyVector::operator+ (MyVector& another)
+template<class Type>
+MyVector<Type> MyVector<Type>::operator+ (MyVector& another)
 {
     MyVector tmp {*this};
     for (int i = 0; i<another.size_; i++)
@@ -163,7 +182,8 @@ MyVector MyVector::operator+ (MyVector& another)
 }
 
 
-ostream& operator<< (ostream& out, MyVector pups)
+template<class Type>
+ostream& operator<< (ostream& out, MyVector<Type> pups)
 {
     out << '[';
     for (int i = 0; i<pups.size_; i++)
@@ -174,15 +194,13 @@ ostream& operator<< (ostream& out, MyVector pups)
     return out << "]";
 }
 
-// int main()
-// {
-//     int one[] {1, 2, 3, 4, 5};
-//     int two[] {7, 8, 9};
 
-//     MyVector first = one;
-//     MyVector second = two;
+int main()
+{
+    bool help[] {1, 0, 1};
+    MyVector<bool> poop = help;
 
-//     cout << first+second << endl;
+    cout << poop << endl;
 
-//     return 0;
-// }
+    return 0;
+}
