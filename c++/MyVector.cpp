@@ -195,12 +195,12 @@ ostream& operator<< (ostream& out, MyVector<Type> pups)
 }
 
 
-int main()
-{
-    bool help[] {1, 0, 1};
-    MyVector<bool> poop = help;
+// int main()
+// {
+//     bool help[] {1, 0, 1};
+//     MyVector<bool> poop = help;
 
-    cout << poop << endl;
+//     cout << poop << endl;
 
-    return 0;
-}
+//     return 0;
+// }
