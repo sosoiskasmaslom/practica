@@ -1,19 +1,19 @@
 
-def set_one():
+def set_one() -> str:
 
     A = {1, 2, 3}
     B = {2, 3, 4}
 
-    return (len(A&B))
+    return str(len(A&B))
 
-def set_two():
+def set_two() -> str:
 
     A = {1, 2, 3}
     B = {2, 3, 4}
 
     return (f'{A-B} {A|B}')
 
-def set_three():
+def set_three() -> str:
 
     section1 = {"Tom", "Bob", "Alice", "Tommy"}
     section2 = {"Alice","Bob","Andy", "Tom", "Mikky"}
@@ -27,7 +27,7 @@ def set_three():
     for i in range(len(answers)):
         return (f"{i+1}. {answers[i]}")
 
-def set_four():
+def set_four() -> str:
 
     people = [
         "Беляев",
@@ -90,7 +90,7 @@ def set_four():
         [f"{i+1}. {answers[i]}" for i in range(len(answers))]
     )
 
-def map_one(city = "Калининград"):
+def map_one(city = "Калининград") -> str:
 
     country = {
         "Москва": "Россия",
@@ -102,7 +102,7 @@ def map_one(city = "Калининград"):
 
     return (f'{city} - это {country[city]}')
 
-def map_two(language = "русский"):
+def map_two(language = "русский") -> str:
 
     country = {
         "русский": "Россия",
@@ -116,7 +116,7 @@ def map_two(language = "русский"):
 
     return (f'{language} - {country[language]}')
 
-def map_three(word = "cat"):
+def map_three(word = "cat") -> str:
 
     translator = {
         "cat": "кошка, кот",
@@ -154,14 +154,20 @@ if __name__ == '__main__':
     ],
 
     [
-        map_one(),
-        map_two(),
-        map_three(),
+        map_one,
+        map_two,
+        map_three,
     ]
     ]
 
     for i in range(len(exs)):
         for j in range(len(exs[i])):
 
-            print(f'Ex. {i+1}.{j+1} - {exs[i][j]}')
-
+            if type(exs[i][j]) == str:
+                print(f'Ex. {i+1}.{j+1} - {exs[i][j]}')
+            else:
+                text = f"enter it from the keyboard for the task {i+1}.{j+1}: "
+                try:
+                    print(f'Ex. {i+1}.{j+1} - {exs[i][j](input(text))}')
+                except KeyError:
+                    print(f'Ex. {i+1}.{j+1} - KeyError')
