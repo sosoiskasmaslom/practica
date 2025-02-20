@@ -32,6 +32,11 @@ class BigInt
     BigInt& operator+=(const BigInt&);
     BigInt& operator+=(int);
 
+    BigInt operator-(BigInt);
+    BigInt operator-(int);
+    BigInt& operator-=(const BigInt&);
+    BigInt& operator-=(int);
+
     BigInt operator*(const BigInt&);
     BigInt operator*(int); 
 
@@ -149,10 +154,9 @@ BigInt BigInt::operator+(BigInt other)
 
     else
     {
-        bool is_first_greater = *this > other;
         bool abs_is_first_greater = BigInt(number, 0) > BigInt(other.number, 0);
 
-        if (is_first_greater*abs_is_first_greater)
+        if (!abs_is_first_greater)
         { return subtractAbs(other); }
         else
         {
@@ -205,6 +209,26 @@ BigInt& BigInt::operator+=(int num)
     return *this;
 }
 
+BigInt BigInt::operator-(BigInt other)
+{ 
+    other.negative ^= 1; 
+    return *this + other;
+}
+
+BigInt BigInt::operator-(int num)
+{ return *this + BigInt(-num); }
+
+BigInt& BigInt::operator-=(const BigInt& other)
+{
+    *this = *this - other;
+    return *this;
+}
+
+BigInt& BigInt::operator-=(int num)
+{
+    *this = *this - num;
+    return *this;
+}
 
 ostream& operator<<(ostream& out, BigInt other)
 {
@@ -238,11 +262,11 @@ int pow(int value, int degree)
 
 int main()
 {
-    BigInt test = 234;
+    BigInt test = 236;
     BigInt secs = -235;
 
     // cout << (test > secs) << endl;
-    cout << (test + secs) << endl;
+    cout << (test - 235) << endl;
 
     return 0;
 }
