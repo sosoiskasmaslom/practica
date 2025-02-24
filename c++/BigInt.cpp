@@ -11,262 +11,242 @@ class BigInt
 
     BigInt();
     BigInt(int);
-    BigInt(const char*);
-    BigInt(const vector<int>&, bool);
+    BigInt(const string&);
+    template<class Type> BigInt(const vector<Type>&, bool);
     BigInt(const BigInt&);
 
-    int size() const;
+    BigInt& operator=(BigInt);
+    BigInt& operator=(const string);
 
-    BigInt& operator=(const BigInt&);
-    BigInt& operator=(const char*);
+    size_t size() const;
+    void nozero();
+
+    short& operator[](int);
+    short operator[](int) const;
 
     bool operator>(const BigInt&) const;
     bool operator<(const BigInt&) const;
 
-    int& operator[](int);
-    int operator[](int) const;
+    BigInt subtractAbs(BigInt) const;
 
-    BigInt operator+(BigInt);
-    BigInt subtractAbs(const BigInt&) const;
-    BigInt operator+(int);
     BigInt& operator+=(const BigInt&);
     BigInt& operator+=(int);
+    BigInt operator+(BigInt);
+    BigInt operator+(int);
 
     BigInt operator-(BigInt);
     BigInt operator-(int);
     BigInt& operator-=(const BigInt&);
     BigInt& operator-=(int);
 
-    BigInt operator*(const BigInt&);
+    BigInt& operator*=(const BigInt&);
+    BigInt& operator*=(int);
+    BigInt operator*(BigInt);
     BigInt operator*(int); 
+
+    BigInt& operator++(); // ++c
+    BigInt operator++(int); // c++
+
+    BigInt& operator--(); // --c
+    BigInt operator--(int); // c--
 
     protected:
 
     bool negative;
-    vector<int> number;
+    vector<short> number;
 };
 
 BigInt::BigInt():
-negative(0),
-number(vector<int>(0))
+negative(0)
 {}
 
-BigInt::BigInt(int numb):
-negative(numb<0),
-number(vector<int>(0))
+BigInt::BigInt(int num):
+negative(num<0)
 {
-    numb = abs(numb);
-    while (numb)
+    num = abs(num);
+    do
     {
-        number.push_back(numb%10);
-        numb /= 10;
-    }
+        number.push_back(num%10);
+        num /= 10;
+    } while (num);
 }
 
-
-BigInt::BigInt(const char* line):
-negative(line[0] == '-'),
-number(vector<int>(0))
-{
-    for (int i = negative; line[i]; ++i)
-    {
-        if (line[i]-48 < 0 | line[i]-48 > 9) continue; 
-        number.insert(number.cbegin(), line[i]-48); 
-    }
+BigInt::BigInt(const string& line):
+negative(line[0] == '-')
+{ 
+    for (int i = negative; i<line.size(); ++i) 
+    number.insert(number.cbegin(), line[i]-'0'); 
 }
 
-BigInt::BigInt(const vector<int>& vec, bool neg = 0):
-negative(neg),
-number(vector<int>(vec.size()))
-{
-    for (int i = 0; i<size(); ++i)
-    { number[i] = vec[size()-i-1]; }
-}
+template<class Type> 
+BigInt::BigInt(const vector<Type>& vec, bool flag):
+negative(flag)
+{ for (auto v: vec) number.insert(number.cbegin(), v); }
 
-BigInt::BigInt(const BigInt& other):
-negative(other.negative),
-number(other.number)
+BigInt::BigInt(const BigInt& another):
+negative(another.negative),
+number(another.number)
 {}
 
-int BigInt::size() const
+BigInt& BigInt::operator=(BigInt another)
+{
+    negative = another.negative;
+    number = another.number;
+
+    return *this;
+}
+
+BigInt& BigInt::operator=(const string line)
+{ return *this = BigInt(line); }
+
+size_t BigInt::size() const
 { return number.size(); }
 
-BigInt& BigInt::operator=(const BigInt& other)
+void BigInt::nozero()
 {
-    negative = other.negative;
-    number = other.number;
-
-    return *this;
-}
-
-BigInt& BigInt::operator=(const char* line)
-{
-    *this = BigInt(line);
-    return *this;
-}
-
-bool BigInt::operator<(const BigInt& other) const
-{
-    if (negative^other.negative)
-    return negative;
-
-    else if (number.size() != other.size())
-    { return negative^(number.size() < other.size()); }
-
-    else
+    int i = size();
+    while (i > 1)
     {
-        for (int i = 0; i<size(); ++i)
-        { if (number[i] != other[i]) return !negative^(number[i] < other[i]); }
+        if (number[i-1]) break;
+        --i;
     }
 
-    return 0;
+    number.resize(i);
 }
 
-bool BigInt::operator>(const BigInt& other) const
-{ return other < *this; }
+short& BigInt::operator[](int i)
+{ return number[i]; }
 
-int& BigInt::operator[](int index)
-{ return number[index]; }
+short BigInt::operator[](int i) const
+{ return number[i]; }
 
-int BigInt::operator[](int index) const
-{ return number[index]; }
-
-BigInt BigInt::operator+(BigInt other)
+bool BigInt::operator>(const BigInt& another) const
 {
+    if (negative^another.negative) return !negative;
 
-    int tmp;
-    if (negative == other.negative)
+    if (size() == another.size())
     {
-        vector<int> result;
-        for (int i = 0; i<size(); ++i)
+        for (int i = size()-1; i >= 0; --i)
         {
-            tmp = number[i] + other[i];
-            if (tmp > 9)
+            if (number[i] == another[i]) continue;    
+            return number[i] > another[i];
+        }
+    }
+
+    return size()>another.size();
+}
+
+bool BigInt::operator<(const BigInt& another) const
+{ return another > *this; }
+
+BigInt BigInt::subtractAbs(BigInt another) const
+{
+    for (int i = 0; i<size(); ++i)
+    {
+        another[i] -= (i < size()) ? number[i] : 0;
+
+        if (another[i] < 0)
+        {
+            another[i] += 10;
+            --another[i];
+        }
+    }
+
+    return another;
+}
+
+BigInt& BigInt::operator+=(const BigInt& another)
+{
+    if (negative == another.negative)
+    {
+        for (int i = 0; i<max(size(), another.size()); ++i)
+        {
+            if (i < size()) number[i] += (i < another.size()) ? another[i] : 0;
+            else number.push_back((i < another.size()) ? another[i] : 0);
+
+            if (number[i] > 9)
             {
-                tmp -= 10;
-                ++other[i+1];
+                number[i] -= 10;
+                ++number[i];
             }
-
-            result.push_back(tmp);
         }
-        return BigInt(result, negative);
+
+        return *this;
     }
 
     else
     {
-        bool abs_is_first_greater = BigInt(number, 0) > BigInt(other.number, 0);
-
-        if (!abs_is_first_greater)
-        { return subtractAbs(other); }
-        else
-        {
-            BigInt temp = other.subtractAbs(*this);
-            temp.negative = other.negative;
-            return temp;
-        }
+        if (BigInt(number, 0) < BigInt(another.number, 0))
+        { return *this = subtractAbs(another); }
+        else { return *this = another.subtractAbs(*this); }
     }
 
-    return BigInt();
+    return *this;
 }
 
-BigInt BigInt::subtractAbs(const BigInt& other) const
+BigInt& BigInt::operator+=(int num)
+{ return *this += BigInt(num); }
+
+BigInt BigInt::operator+(BigInt another)
 {
-    vector<int> result;
-    int tmp = 0;
-
-    for (int i = 0; i < size(); ++i)
-    {
-        tmp = number[i] - other[i] - tmp;
-
-        if (tmp < 0)
-        {
-            tmp += 10;
-            result.push_back(tmp);
-            tmp = 1;
-        }
-        else
-        {
-            result.push_back(tmp);
-            tmp = 0;
-        }
-    }
-
-    return BigInt(result, negative);
+    BigInt copy = *this;
+    copy += another;
+    return copy;
 }
 
 BigInt BigInt::operator+(int num)
 { return *this + BigInt(num); }
 
-BigInt& BigInt::operator+=(const BigInt& other)
+BigInt BigInt::operator-(BigInt another)
 {
-    *this = *this + other;
-    return *this;
-}
-
-BigInt& BigInt::operator+=(int num)
-{
-    *this = *this + num;
-    return *this;
-}
-
-BigInt BigInt::operator-(BigInt other)
-{ 
-    other.negative ^= 1; 
-    return *this + other;
+    another.negative ^= 1;
+    return another += *this;
 }
 
 BigInt BigInt::operator-(int num)
-{ return *this + BigInt(-num); }
+{ return *this - BigInt(num); }
 
-BigInt& BigInt::operator-=(const BigInt& other)
-{
-    *this = *this - other;
-    return *this;
-}
+BigInt& BigInt::operator-=(const BigInt& another)
+{ return *this = *this - another; }
 
 BigInt& BigInt::operator-=(int num)
+{ return *this = *this - BigInt(num); }
+
+BigInt& BigInt::operator++() // ++c
+{ return *this += 1; }
+
+BigInt BigInt::operator++(int) // c++
 {
-    *this = *this - num;
-    return *this;
+    BigInt copy = *this;
+    *this += 1;
+    return copy;
 }
 
-ostream& operator<<(ostream& out, BigInt other)
+BigInt& BigInt::operator--() // --c
+{ return *this -= 1; }
+
+BigInt BigInt::operator--(int) // c--
 {
-    if (other.negative) out << '-';
-    // for (auto it = other.number.rbegin(); it < other.number.rend(); ++it)
-    // { out << *it; }
+    BigInt copy = *this;
+    *this -= 1;
+    return copy;
+}
 
-    // out << endl;
-
-    for(auto it: other.number)
-    { out << it; }
-
-    // ААААААААААААААААА Я НЕ ПОНИМАЮ
+ostream& operator<<(ostream& out, BigInt another)
+{
+    another.nozero();
+    if (another.negative) out << '-';
+    for (int i = another.size(); i>0; --i)
+    { out << another[i-1]; }
 
     return out;
 }
 
-template<class Type>
-Type abs(Type a)
-{ return (a<0)? -a:a; }
-
-int pow(int value, int degree)
+istream& operator>>(istream& in, BigInt& another)
 {
-    int tmp = 1;
-    for (int i = 0; i<degree; ++i)
-    { tmp *= value; }
+    string tmp;
+    in >> tmp;
+    another = BigInt(tmp);
 
-    return tmp;
-}
-
-
-int main()
-{
-    BigInt test = 236;
-    BigInt secs = -235;
-
-    // cout << (test > secs) << endl;
-    cout << (test - 235) << endl;
-
-    return 0;
+    return in;
 }
