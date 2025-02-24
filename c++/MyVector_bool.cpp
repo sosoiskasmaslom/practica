@@ -184,15 +184,3 @@ ostream& operator<< (ostream& out, MyVector<bool> other)
     }
     return out << ']';
 }
-
-
-int main()
-{
-    bool help[] {1, 0, 1};
-    MyVector<bool> poop = help;
-    poop.erase(2);
-
-    cout << poop << endl;
-
-    return 0;
-}

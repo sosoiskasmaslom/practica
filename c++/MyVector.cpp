@@ -193,14 +193,3 @@ ostream& operator<< (ostream& out, MyVector<Type> pups)
     }
     return out << "]";
 }
-
-
-// int main()
-// {
-//     bool help[] {1, 0, 1};
-//     MyVector<bool> poop = help;
-
-//     cout << poop << endl;
-
-//     return 0;
-// }

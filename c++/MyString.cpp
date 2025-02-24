@@ -88,14 +88,3 @@ MyString& MyString::operator+=(const char* str)
 ostream& operator<<(ostream& out, const MyString& str)
 { return out << str.str_; }
 
-
-// int main()
-// {
-//     MyString s = "I love ";
-//     MyString t = "big black";
-
-//     cout << s << endl;
-//     // cout << s+t << endl;
-
-//     return 0;
-// }

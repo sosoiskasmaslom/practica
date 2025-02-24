@@ -280,36 +280,3 @@ bool first_num(int a, int b)
     return a>b;
 
 }
-
-int main() 
-{
-
-    int n;
-
-    cout << "U can suck my ass and then write numbers:" << endl;
-    cin >> n;
-
-    List pupsik {n};
-    while (1) 
-    {
-        cin >> n;
-        if (n < 0) break;
-        pupsik.insert(n);
-    }
-
-    if (pupsik == sorted(pupsik) || 
-        pupsik == sorted(pupsik, unsort))
-    {
-        while (pupsik.erase(erase_list)) {}
-        pupsik.dubl(easy);
-    }
-    else 
-    {
-        pupsik.sort(first_num);
-    }
-
-    print(&pupsik);
-
-    return 0;
-
-}

@@ -340,16 +340,3 @@ Matrix& operator++(Matrix& second)
 
 Matrix& operator--(Matrix& second)
 { return second -= 1; }
-
-
-// int main()
-// {
-//     Matrix boobs {3, 3, 9};
-//     int deter = boobs.det();
-//     Matrix new_one {(boobs.adj())};
-
-//     cout << boobs.det() << endl;
-//     cout << new_one;
-
-//     return 0;
-// }
