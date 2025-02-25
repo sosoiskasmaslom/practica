@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <vector>
 using namespace std;
@@ -26,6 +25,9 @@ class BigInt
 
     bool operator>(const BigInt&) const;
     bool operator<(const BigInt&) const;
+    bool operator==(const BigInt&) const;
+    bool operator!=(const BigInt&) const;
+
 
     BigInt subtractAbs(BigInt) const;
 
@@ -38,6 +40,9 @@ class BigInt
     BigInt operator-(int);
     BigInt& operator-=(const BigInt&);
     BigInt& operator-=(int);
+
+    BigInt multiplicationfigure(short) const;
+    BigInt multiplication10(int) const;
 
     BigInt& operator*=(const BigInt&);
     BigInt& operator*=(int);
@@ -139,6 +144,20 @@ bool BigInt::operator>(const BigInt& another) const
 bool BigInt::operator<(const BigInt& another) const
 { return another > *this; }
 
+bool BigInt::operator==(const BigInt& another) const
+{
+    if (negative != another.negative) return 0;
+    if (size() != another.size()) return 0;
+
+    for (int i = 0; i<size(); ++i)
+    { if (number[i] != another[i]) return 0; }
+
+    return 1;
+}
+
+bool BigInt::operator!=(const BigInt& another) const
+{ return !(*this == another); }
+
 BigInt BigInt::subtractAbs(BigInt another) const
 {
     for (int i = 0; i<size(); ++i)
@@ -211,6 +230,41 @@ BigInt& BigInt::operator-=(const BigInt& another)
 
 BigInt& BigInt::operator-=(int num)
 { return *this = *this - BigInt(num); }
+
+BigInt& BigInt::operator*=(const BigInt& another)
+{
+    BigInt result;
+    result.number.resize(size() + another.size(), 0);
+    result.negative = negative ^ another.negative;
+
+    for (int i = 0; i < size(); ++i)
+    {
+        for (int j = 0; j < another.size(); ++j)
+        {
+            result.number[i + j] += number[i] * another[j];
+            if (result.number[i + j] > 9)
+            {
+                result.number[i + j + 1] += result.number[i + j] / 10;
+                result.number[i + j] %= 10;
+            }
+        }
+    }
+
+    return *this = result;
+}
+
+BigInt& BigInt::operator*=(int num)
+{ return *this *= BigInt(num); }
+
+BigInt BigInt::operator*(BigInt another)
+{
+    BigInt copy = *this;
+    copy *= another;
+    return copy;
+}
+
+BigInt BigInt::operator*(int num)
+{ return *this * BigInt(num); }
 
 BigInt& BigInt::operator++() // ++c
 { return *this += 1; }
