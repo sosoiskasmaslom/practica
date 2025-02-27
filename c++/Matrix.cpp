@@ -45,7 +45,7 @@ class Matrix
     Matrix operator--(int);
 
     Matrix<type, row-1, column-1> minor(int, int) const;
-    int det() const; // дописать надо для матриц порядка выше 2
+    int det() const; // непонел как сделал
     Matrix transposition() const;
     void set(type, int, int);
     pair<type, type> get_size();
@@ -267,36 +267,57 @@ Matrix<type, row-1, column-1> Matrix<type, row, column>::minor(int in, int jn) c
     return tmp;
 }
 
+// а теперь мой любимый кусок кода, под названием
+// "так, и где тут ошибка? всмысле он работает..."
+// вообще не понимаю, как он работает, но он работает
 template<class type, int row, int column>
 int Matrix<type, row, column>::det() const
 {
-    int i, j, d, k;
+    if (row != column) throw UniversalError{"матрица не квадратная"};
 
-    j = 0; d = 0;
-    k = 1; //(-1) в степени i
+    int indexes[row];
+    for (int i = 0; i < row; ++i) 
+    { indexes[i] = i; }
 
-    if (row < 1) return d;
-    if (row == 1) 
+    int determinant = 0;
+    int k, tmp = 1;
+
+    while (1)
     {
-        d = matrix[0][0];
-        return(d);
-    }
-    if (row == 2) 
-    {
-        d = (matrix[0][0] * matrix[1][1]) - (matrix[1][0] * matrix[0][1]);
-        return(d);
-    }
-    if (row > 2) {
-        for (i = 0; i < m; i++) 
+        k = 0;
+        for (int i = 0; i < row; ++i)
         {
-            throw UniversalError{"мне лень прописывать пока что"};
-            // d = d + k * matrix[i][0] * (minor(i, 0).det());
-            // тут помогут концепты, если они заработают
-            k = -k;
+            for (int j = i + 1; j < row; ++j)
+            {
+                if (indexes[i] > indexes[j]) ++k;
+                if (indexes[i] == indexes[j])
+                {
+                    k = 0;
+                    goto dontkillme;
+                }
+            }
+        }
+
+        k = (k % 2 == 0) ? 1 : -1;
+
+        for (int r = 0; r < row; ++r)
+        { tmp *= matrix[r][indexes[r]]; }
+
+        dontkillme: // fuck fuck fuck fuck, please, dont hurt me, its a joke
+
+        determinant += k * tmp;
+        tmp = 1;
+
+        for (int i = row - 1; i >= 0; --i)
+        {
+            ++indexes[i];
+            if (indexes[i] < row) break;
+            indexes[i] = 0;
+            if (i == 0) return determinant;
         }
     }
 
-    return(d);
+    return determinant;
 }
 
 template<class type, int row, int column>
