@@ -7,7 +7,7 @@ if [ $# -lt 1 ]; then
     exit 1
 fi
 
-g++ $1 -o $var
+g++ $1 -o $var -std=c++20
 if [ $? -ne 0 ]; then
     echo "Ошибка компиляции $SOURCE_FILE"
     exit 1
