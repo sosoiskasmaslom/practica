@@ -1,0 +1,24 @@
+// Вариант 4
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Замена текста на дату</title>
+</head>
+<body>
+    <h1>Нажмите кнопку для замены текста страницы</h1>
+    <h6 id="text">Этот текст будет заменен</h6>
+    <button onclick="replaceText()">Нажмите меня</button>
+
+    <script>
+        function replaceText() {
+            // Создаем переменную с текущей датой
+            const date_ = new Date();
+
+            // Заменяем текст внутри тега <h6> на текущую дату
+            document.getElementById("text").textContent = date_.toLocaleString();
+        }
+    </script>
+</body>
+</html>

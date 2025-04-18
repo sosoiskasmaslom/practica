@@ -1,0 +1,39 @@
+// Вариант 3
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Группировка студентов по возрасту</title>
+</head>
+<body>
+    <h1>Группировка студентов по возрасту</h1>
+    <button onclick="groupStudentsByAge()">Группировать</button>
+    <pre id="output"></pre>
+
+    <script>
+        // Исходный массив студентов
+        const students = [
+            { name: 'alex', age: 20 },
+            { name: 'mike', age: 24 },
+            { name: 'masha', age: 20 },
+            { name: 'stas', age: 18 },
+        ];
+
+        // Функция для группировки студентов по возрасту
+        function groupStudentsByAge() {
+            const grouped = students.reduce((acc, student) => {
+                const age = student.age;
+                if (!acc[age]) {
+                    acc[age] = [];
+                }
+                acc[age].push(student);
+                return acc;
+            }, {});
+
+            // Вывод результата на страницу
+            document.getElementById("output").textContent = JSON.stringify(grouped, null, 2);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+// Вариант 2
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вычисление cos(x)</title>
+</head>
+<body>
+    <h1>Вычисление cos(x)</h1>
+    <p id="result"></p>
+
+    <script>
+        // Задаем значение переменной x
+        const x = Math.PI / 4; // Пример: π/4 (45 градусов)
+
+        // Вычисляем cos(x)
+        const cosX = Math.cos(x);
+
+        // Выводим результат на страницу
+        document.getElementById("result").textContent = `cos(${x}) = ${cosX}`;
+    </script>
+</body>
+</html>

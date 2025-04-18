@@ -1,0 +1,33 @@
+// Вариант 3
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Объект Компьютер</title>
+</head>
+<body>
+    <h1>Информация о компьютере</h1>
+    <button onclick="showComputerInfo()">Показать информацию</button>
+    <p id="output"></p>
+
+    <script>
+        // Создаем объект Компьютер
+        const computer = {
+            model: "MacBook Pro",
+            manufacturer: "Apple",
+            price: "2000$"
+        };
+
+        // Функция для вывода свойств объекта на экран
+        function showComputerInfo() {
+            const output = `
+                Модель: ${computer.model}<br>
+                Производитель: ${computer.manufacturer}<br>
+                Цена: ${computer.price}
+            `;
+            document.getElementById("output").innerHTML = output;
+        }
+    </script>
+</body>
+</html>
